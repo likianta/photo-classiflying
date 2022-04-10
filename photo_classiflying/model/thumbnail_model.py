@@ -50,11 +50,13 @@ class PyThumbnailModel(Model):
             x['filepath']: i for i, x in enumerate(self.items)
         }
         new_paths = []
-        for p in fs.find_files(self._gallery_root):
+        for p in fs.findall_file_paths(self._gallery_root):
             if p in paths:
                 paths.pop(p)
             else:
                 new_paths.append(p)
+        # print(':l', paths, len(paths))
+        # print(':l', new_paths, len(new_paths))
         if paths:  # there are some files deleted
             for p, i in paths.items():
                 self.delete(i)
