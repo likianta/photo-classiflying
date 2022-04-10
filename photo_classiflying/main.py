@@ -17,13 +17,13 @@ os.chdir(currdir())
 
 class PyMainProgram(QObject):
     
-    def __init__(self):
+    def __init__(self, gallery_dir: str):
         super().__init__()
         
         self._current_thumb_index = 0
         self._recycler_dir = fs.relpath('../model/recycled')
         
-        self._thumbnail_model = PyThumbnailModel()
+        self._thumbnail_model = PyThumbnailModel(gallery_dir)
         self._sidebar_model = PySidebarModel()
         self._key_bindings = PyKeyBindings()
         
@@ -97,9 +97,9 @@ class PyMainProgram(QObject):
 _holder = []  # runtime holder, avoid python gc.
 
 
-def main():
+def main(gallery_dir: str):
     # from PySide6.QtQuickControls2 import QQuickStyle
     # QQuickStyle.setStyle('Imagine')
-    _holder.append(PyMainProgram())
+    _holder.append(PyMainProgram(gallery_dir))
     app.start('./qml/Main.qml')
     # hot_loader.start('./qml/Main.qml')

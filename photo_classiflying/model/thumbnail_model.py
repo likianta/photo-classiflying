@@ -17,11 +17,11 @@ class PyThumbnailModel(Model):
     file_added = signal(str)
     file_removed = signal(str)
     
-    def __init__(self):
+    def __init__(self, gallery_dir):
         super().__init__(role_names=(
             'filepath', 'filename', 'created', 'mark',
         ))
-        self._gallery_root = 'C:/Likianta/test/2022-04/todo'  # TEST
+        self._gallery_root = gallery_dir
         self._paths = []
         if os.path.exists(db_path):
             db = loads(db_path)
