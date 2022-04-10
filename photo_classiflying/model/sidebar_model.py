@@ -7,7 +7,7 @@ from lk_utils import relpath
 from lk_qtquick_scaffold import Model
 from lk_qtquick_scaffold import signal
 
-db_path = relpath('../../../database/sidebar_model.pkl')
+db_path = relpath('../../database/sidebar_model.pkl')
 
 
 class PySidebarModel(Model):

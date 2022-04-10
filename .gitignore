@@ -1,4 +1,5 @@
 /.idea/
+/database/*.pkl
 /deleted/
 /tests/
 __pycache__

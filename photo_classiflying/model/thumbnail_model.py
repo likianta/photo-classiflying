@@ -10,7 +10,7 @@ from lk_qtquick_scaffold import Model
 from lk_qtquick_scaffold import signal
 from lk_qtquick_scaffold import slot
 
-db_path = relpath('../../../database/thumbnail_model.pkl')
+db_path = relpath('../../database/thumbnail_model.pkl')
 
 
 class PyThumbnailModel(Model):
