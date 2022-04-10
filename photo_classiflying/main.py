@@ -21,7 +21,7 @@ class PyMainProgram(QObject):
         super().__init__()
         
         self._current_thumb_index = 0
-        self._recycler_dir = fs.relpath('../../model/recycled')
+        self._recycler_dir = fs.relpath('../model/recycled')
         
         self._thumbnail_model = PyThumbnailModel()
         self._sidebar_model = PySidebarModel()
