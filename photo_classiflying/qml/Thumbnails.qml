@@ -8,7 +8,7 @@ ListView {
     //  suggest not greater than the width of view. make it near to mouse
     //  scroll speed (or x2 faster).
     clip: true
-//    flickableDirection: Flickable.HorizontalFlick
+    currentIndex: -1
     model: PyThumbnailModel
     orientation: ListView.Horizontal
     spacing: 4
@@ -86,5 +86,6 @@ ListView {
 
     Component.onCompleted: {
         this.model.load_gallery()
+        this.currentIndex = 0
     }
 }
