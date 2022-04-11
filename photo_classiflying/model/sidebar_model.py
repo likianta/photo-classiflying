@@ -16,7 +16,7 @@ class PySidebarModel(Model):
     
     def __init__(self):
         super().__init__(role_names=('mark', 'count', 'title', 'dirpath'))
-        self.path_2_mark = {}
+        self.path_2_mark = {}  # path means 'file path'
         self.mark_2_paths = {}
         self.mark_2_index = {
             '0': 0,
@@ -64,13 +64,22 @@ class PySidebarModel(Model):
         
         # init model
         if not exists(model_path):
+            from ..config import user_config
             self.mark_2_paths.update(
                 {mark: set() for mark in self.mark_2_index}
             )
-            self.append_many(entries := [
+            entries = [
                 {'mark': mark, 'count': 0, 'title': '', 'dirpath': ''}
                 for mark in self.mark_2_index
-            ])
+            ]
+            # load predefined paths
+            # note: '0' (index=0) and 'z' (index=35) are reserved marks.
+            # PERF: shall we sort the predefined paths?
+            for i, p in enumerate(user_config['predefined_paths'], 1):
+                if i >= 35: break
+                entries[i]['dirpath'] = p
+                entries[i]['title'] = p.rsplit('/', 1)[-1]
+            self.append_many(entries)
             dumps({
                 'path_2_mark' : self.path_2_mark,
                 'mark_2_paths': self.mark_2_paths,
