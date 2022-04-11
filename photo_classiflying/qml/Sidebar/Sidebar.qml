@@ -99,16 +99,25 @@ BasePane {
                     }
 
                     onTextChanged: {
-                        const autoTitle = pyside.eval(`
+                        _title.text = pyside.eval(`
+                            if not dirpath: return ''
                             dirpath = dirpath.replace('\\\\', '/')
                             if '/' in dirpath:
                                 return dirpath.rsplit('/', 1)[1]
                             else:
                                 return ''
                         `, {'dirpath': this.text})
-                        if (autoTitle) {
-                            _title.text = autoTitle
-                        }
+                    }
+                }
+
+                C.Button {
+                    id: _clear_btn
+                    visible: root.expanded && (
+                        model.mark != '0' || model.mark != 'z'
+                    )
+                    text: 'clear'
+                    onClicked: {
+                        _dirpath.text = ''
                     }
                 }
 
