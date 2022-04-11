@@ -14,6 +14,12 @@ TextEdit {
         this.submitted(this.text)
     }
 
+    onFocusChanged: {
+        if (!this.activeFocus) {
+            this.submitted(this.text)
+        }
+    }
+
     Rectangle {
         anchors {
             left: parent.left
@@ -26,15 +32,15 @@ TextEdit {
     }
 
     Keys.onReturnPressed: (event) => {
-        root.submitted(root.text)
+        this.focus = false
         event.accepted = true
     }
     Keys.onTabPressed: (event) => {
-        root.submitted(root.text)
+        this.focus = false
         event.accepted = true
     }
     Keys.onBacktabPressed: (event) => {
-        root.submitted(root.text)
+        this.focus = false
         event.accepted = true
     }
 }

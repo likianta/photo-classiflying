@@ -108,12 +108,14 @@ class PySidebarModel(Model):
     
     def sort_marks(self):
         backup = self._items[1:-1]
+        # print(':vl', backup)
         #   top and bottom don't participate in the sort.
         # sort by: tuple[bool is_empty, str text]
         #   is_empty: True first, False last
         # https://cloud.tencent.com/developer/ask/219983
         backup.sort(key=lambda x: (not bool(x['dirpath']), x['dirpath']))
         backup.sort(key=lambda x: (not bool(x['title']), x['title']))
+        # print(':vl', backup)
         # rebuild marks in order.
         for item, mark in zip(
                 [None] + backup + [None],

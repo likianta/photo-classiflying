@@ -58,19 +58,14 @@ BasePane {
                     text: '(' + model.count + ')'
                 }
 
-                C.TextEdit {
+                Text {
                     id: _title
                     anchors.verticalCenter: parent.verticalCenter
                     width: root.defaultWidth - 12 - x - 12
-//                    clip: true
+                    clip: true
+                    color: 'white'
+                    font.pixelSize: 12
                     text: model.title
-                    onSubmitted: (text) => {
-                        const result = PySidebarModel.qupdate(
-                            model.index, {'title': text}
-                        )
-                        console.log(model.index, JSON.stringify(result))
-                        root.editingFinished(text)
-                    }
                 }
 
                 Text {
@@ -86,14 +81,12 @@ BasePane {
                         model.mark != '0' || model.mark != 'z'
                     )
                     anchors.verticalCenter: parent.verticalCenter
-                    width: root.expandedWidth - 12
-                        - _expand_btn.width - 4
-                        - x - 12
+                    width: 240
                     text: model.dirpath
 
                     onSubmitted: (text) => {
                         PySidebarModel.qupdate(
-                            model.index, {'dirpath': text}
+                            model.index, {'dirpath': text, 'title': _title.text}
                         )
                         root.editingFinished(this.text)
                     }
@@ -115,9 +108,16 @@ BasePane {
                     visible: root.expanded && (
                         model.mark != '0' || model.mark != 'z'
                     )
+                    anchors.verticalCenter: parent.verticalCenter
                     text: 'clear'
                     onClicked: {
+                        // FIXME: `_dirpath.text = ...` has broken the binding
+                        //  mechanism between text and model. we have to make a
+                        //  workaround to reconnect them.
                         _dirpath.text = ''
+                        _dirpath.submitted('')
+                        // this is the workaround.
+                        _dirpath.text = Qt.binding(() => model.dirpath)
                     }
                 }
 
@@ -148,6 +148,19 @@ BasePane {
                         }
                     }
                 }
+
+//                Component.onCompleted: {
+//                    if (_clear_btn.visible) {
+//                        _dirpath.width = this.width
+//                            - _expand_btn.width - 4
+//                            - _clear_btn.width - 4
+//                            - _dirpath.x
+//                    } else {
+//                        _dirpath.width = this.width
+//                            - _expand_btn.width - 4
+//                            - _dirpath.x
+//                    }
+//                }
             }
         }
     }
@@ -171,6 +184,7 @@ BasePane {
         anchors {
             bottom: parent.bottom
             margins: 8
+            leftMargin: 0
         }
         x: root.defaultWidth + 12
         width: root.extendWidth - 12 - x
