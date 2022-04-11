@@ -4,13 +4,11 @@ from datetime import datetime
 from lk_utils import dumps
 from lk_utils import fs
 from lk_utils import loads
-from lk_utils import relpath
 
 from lk_qtquick_scaffold import Model
 from lk_qtquick_scaffold import signal
 from lk_qtquick_scaffold import slot
-
-db_path = relpath('../../database/thumbnail_model.pkl')
+from ..paths import thumbnail_model as model_path
 
 
 class PyThumbnailModel(Model):
@@ -23,8 +21,8 @@ class PyThumbnailModel(Model):
         ))
         self._gallery_root = gallery_dir
         self._paths = []
-        if os.path.exists(db_path):
-            db = loads(db_path)
+        if os.path.exists(model_path):
+            db = loads(model_path)
             self.append_many(db['items'])
             self._paths.extend(db['paths'])
     
@@ -97,7 +95,7 @@ class PyThumbnailModel(Model):
         dumps({
             'items': self._items,
             'paths': self._paths,
-        }, db_path)
+        }, model_path)
 
 
 def _get_file_created_time(file: str) -> str:

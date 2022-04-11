@@ -2,12 +2,10 @@ from os.path import exists
 
 from lk_utils import dumps
 from lk_utils import loads
-from lk_utils import relpath
 
 from lk_qtquick_scaffold import Model
 from lk_qtquick_scaffold import signal
-
-db_path = relpath('../../database/sidebar_model.pkl')
+from ..paths import sidebar_model as model_path
 
 
 class PySidebarModel(Model):
@@ -65,7 +63,7 @@ class PySidebarModel(Model):
         )
         
         # init model
-        if not exists(db_path):
+        if not exists(model_path):
             self.mark_2_paths.update(
                 {mark: set() for mark in self.mark_2_index}
             )
@@ -77,9 +75,9 @@ class PySidebarModel(Model):
                 'path_2_mark' : self.path_2_mark,
                 'mark_2_paths': self.mark_2_paths,
                 'entries'     : entries,
-            }, db_path)
+            }, model_path)
         else:
-            data = loads(db_path)
+            data = loads(model_path)
             self.path_2_mark = data['path_2_mark']
             self.mark_2_paths = data['mark_2_paths']
             self.append_many(data['entries'])
@@ -144,4 +142,4 @@ class PySidebarModel(Model):
             'path_2_mark' : self.path_2_mark,
             'mark_2_paths': self.mark_2_paths,
             'entries'     : self.items
-        }, db_path)
+        }, model_path)

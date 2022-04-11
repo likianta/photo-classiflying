@@ -11,6 +11,7 @@ from lk_qtquick_scaffold import slot
 from .keybindings import PyKeyBindings
 from .model import PySidebarModel
 from .model import PyThumbnailModel
+from . import paths
 
 os.chdir(currdir())
 
@@ -21,7 +22,7 @@ class PyMainProgram(QObject):
         super().__init__()
         
         self._current_thumb_index = 0
-        self._recycler_dir = fs.relpath('../model/recycled')
+        self._recycler_dir = paths.recycle_bin
         
         self._thumbnail_model = PyThumbnailModel(gallery_dir)
         self._sidebar_model = PySidebarModel()

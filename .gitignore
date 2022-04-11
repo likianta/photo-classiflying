@@ -1,6 +1,6 @@
 /.idea/
-/database/*.pkl
 /deleted/
+/model/*.pkl
 /tests/
 __pycache__
 *.pyc
