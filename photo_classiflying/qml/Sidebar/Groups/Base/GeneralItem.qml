@@ -10,6 +10,9 @@ Row {
     property int  defaultWidth
     property int  expandedWidth
     property bool expanded
+    property var  listviewModel: null  // optional
+    property var  rootModel
+
     property var  options: {
         'group_index': -1,
         'show_index': false,
@@ -22,12 +25,11 @@ Row {
         'custom_exec_button_func': false,
     }
 
+    // exposed properties
     property var btn1: _clear_btn
     property var btn2: _exec_btn
     property var dirpathItem: _dirpath
     property var titleItem: _title
-
-    signal execClicked()
 
     B.Text {
         visible: root.options['show_index']
@@ -88,6 +90,17 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         width: 240
         text: model.dirpath
+        onSubmitted: (text) => {
+            if (text == '') {
+                root.rootModel.qupdate(
+                    model.index, {'dirpath': '', 'title': ''}
+                )
+            } else {
+                root.rootModel.qupdate(
+                    model.index, {'dirpath': text, 'title': _title.text}
+                )
+            }
+        }
     }
 
     C.Button {
@@ -96,13 +109,14 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         text: 'clear'
         onClicked: {
-            // FIXME: `_dirpath.text = ...` will break the binding mechanism
-            //  between text and model. we have to make a workaround to
-            //  reconnect them.
-            _dirpath.text = ''
             _dirpath.submitted('')
-            // this is the workaround.
-            _dirpath.text = Qt.binding(() => model.dirpath)
+//             // FIXME: `_dirpath.text = ...` will break the binding mechanism
+//             //  between text and model. we have to make a workaround to
+//             //  reconnect them.
+//             _dirpath.text = ''
+//             _dirpath.submitted('')
+//             // this is the workaround.
+//             _dirpath.text = Qt.binding(() => model.dirpath)
         }
     }
     
@@ -111,17 +125,23 @@ Row {
         visible: root.expanded && root.options['show_exec_button']
         anchors.verticalCenter: parent.verticalCenter
         text: root.options['exec_button_name']
-        Component.onCompleted: {
-            if (root.options['custom_exec_button_func']) {
-                this.clicked.connect(root.execClicked)
-            } else {
-                this.clicked.connect(() => {
-                    PyMainProg.move_paths(
-                        model.mark,
-                        root.options['group_index'],
-                    )
-                })
-            }
+        onClicked: {
+            PyMainProg.move_paths(
+                model.mark,
+                root.options['group_index'],
+            )
         }
+//         Component.onCompleted: {
+//             if (root.options['custom_exec_button_func']) {
+//                 this.clicked.connect(root.execClicked)
+//             } else {
+//                 this.clicked.connect(() => {
+//                     PyMainProg.move_paths(
+//                         model.mark,
+//                         root.options['group_index'],
+//                     )
+//                 })
+//             }
+//         }
     }
 }

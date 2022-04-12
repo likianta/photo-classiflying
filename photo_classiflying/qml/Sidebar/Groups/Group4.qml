@@ -30,5 +30,6 @@ B.CollapsablePane {
         item.titleItem.text = 'deleted'
         item.dirpathItem.visible = false
         item.btn1.visible = false
+        item.btn2.text = 'delete'
     }
 }

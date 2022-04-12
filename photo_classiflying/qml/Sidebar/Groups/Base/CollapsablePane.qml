@@ -21,6 +21,7 @@ Item {
             defaultWidth: root.defaultWidth
             expandedWidth: root.expandedWidth
             expanded: root.expanded
+            rootModel: _listview.model
             Component.onCompleted: {
                 if (root.options) {
                     this.options = root.options
