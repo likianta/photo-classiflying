@@ -6,8 +6,8 @@ from lk_qtquick_scaffold import slot
 
 
 class PyKeyBindings(QObject):
-    mark_updated = signal(str, int)  # signal[str mark, int group_index]
-    last_mark: str = '0'
+    mark_updated = signal(str)  # signal[str mark]
+    last_mark = '0'
     
     _preview_item: QObject
     _thumbnails_item: QObject
@@ -82,17 +82,7 @@ class PyKeyBindings(QObject):
         # mark and goto next image
         if code in mark_keys:
             mark = mark_keys[code]
-            # noinspection PyCompatibility
-            match mark:
-                case '0':
-                    group_index = 0
-                case x if x.isdigit():
-                    group_index = 1
-                case x if x.isalpha():
-                    group_index = 2
-                case _:
-                    group_index = 3
-            self.mark_updated.emit(mark, group_index)
+            self.mark_updated.emit(mark)
             self.last_mark = mark
             self._thumbnails_item.nextImage()
         
@@ -135,5 +125,5 @@ class PyKeyBindings(QObject):
         
         # reset mark but not goto next image
         elif code == Qt.Key_Escape:
-            self.mark_updated.emit('0', 0)
+            self.mark_updated.emit('0')
             self.last_mark = '0'

@@ -70,7 +70,9 @@ class PyMainProgram(QObject):
     def sort_marks(self):
         self._sidebar_models[2].sort_marks()
     
-    def _update_mark(self, mark: str, group_index: int):
+    def _update_mark(self, mark: str):
+        from .model import mark_2_group_index
+        
         self._thumbnail_model.update(
             index=self._current_thumb_index,
             item={'mark': mark}
@@ -81,7 +83,7 @@ class PyMainProgram(QObject):
         2. then call add method.
         """
         
-        def get_method(modelx: int, model, inc: bool):
+        def get_method(model, group_index: int, inc: bool):
             # inc: True: increase; False: decrease.
             from functools import partial
             nonlocal mark, path
@@ -90,7 +92,7 @@ class PyMainProgram(QObject):
                 else model.decrease_mark_count
             
             # noinspection PyCompatibility
-            match modelx:
+            match group_index:
                 case 0:
                     return method
                 case 1:
@@ -109,13 +111,15 @@ class PyMainProgram(QObject):
         
         if path in path_2_mark:
             old_mark = path_2_mark[path]
-            model = self._sidebar_models[group_index]
-            method = get_method(group_index, model, False)
+            old_group_index = mark_2_group_index(old_mark)
+            model = self._sidebar_models[old_group_index]
+            method = get_method(model, old_group_index, False)
             method(old_mark)
         
         path_2_mark[path] = mark
+        group_index = mark_2_group_index(mark)
         model = self._sidebar_models[group_index]
-        method = get_method(group_index, model, True)
+        method = get_method(model, group_index, True)
         method(mark)
 
 

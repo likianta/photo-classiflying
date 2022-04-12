@@ -70,13 +70,15 @@ class Model1(BaseModel):
         self.mark_2_paths['0'].update(paths)
         self.update(0, {'count': len(paths)})
     
-    def add_file(self, path: str, mark='0'):
+    def add_file(self, path: str):
+        mark = '0'
         path_2_mark[path] = mark
         self.mark_2_paths[mark].add(path)
         self.update(0, {'count': len(self.mark_2_paths[mark])})
     
     def remove_file(self, path: str):
-        mark = path_2_mark.pop(path)
+        mark = '0'
+        path_2_mark.pop(path)
         self.mark_2_paths[mark].remove(path)
         self.update(0, {'count': len(self.mark_2_paths[mark])})
 
