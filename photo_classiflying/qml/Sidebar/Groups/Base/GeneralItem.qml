@@ -53,7 +53,8 @@ Row {
 
     B.Text {
         id: _title
-        width: root.defaultWidth - x
+        width: root.defaultWidth - x - 4
+        clip: true
         text: model.title
         Component.onCompleted: {
             if (root.options['title']) {

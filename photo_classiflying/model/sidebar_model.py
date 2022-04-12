@@ -142,6 +142,20 @@ class Model3(BaseModel):
                 'title'  : basename(path),
             })
     
+    def increase_mark_count(self, mark: str, path: str):
+        super().increase_mark_count(mark, path)
+        item = self.get(self.mark_2_index[mark])
+        self.mark_updated.emit(
+            mark, item['count'], item['title'], item['dirpath']
+        )
+        
+    def decrease_mark_count(self, mark: str, path: str):
+        super().decrease_mark_count(mark, path)
+        item = self.get(self.mark_2_index[mark])
+        self.mark_updated.emit(
+            mark, item['count'], item['title'], item['dirpath']
+        )
+    
     def sort_marks(self):
         backup = self._items[1:-1]
         # print(':vl', backup)
@@ -161,31 +175,31 @@ class Model3(BaseModel):
             item['mark'] = mark
         self.update_many(1, 1 + len(backup), backup)
     
-    def add_file(self, path: str, mark='0'):
-        path_2_mark[path] = mark
-        self.mark_2_paths[mark].add(path)
-        self._update_count(mark, len(self.mark_2_paths[mark]))
-    
-    def remove_file(self, path: str):
-        mark = path_2_mark.pop(path)
-        self.mark_2_paths[mark].remove(path)
-        self._update_count(mark, len(self.mark_2_paths[mark]))
-    
-    # noinspection PyMethodOverriding
-    def clear(self, mark: str) -> tuple[str, ...]:
-        out = tuple(self.mark_2_paths[mark])
-        for path in self.mark_2_paths[mark]:
-            path_2_mark.pop(path)
-        self.mark_2_paths[mark].clear()
-        self._update_count(mark, 0)
-        return out
-    
-    def _update_count(self, mark: str, count: int):
-        index = self.mark_2_index[mark]
-        item = self.update(index=index, item={'count': count})
-        self.mark_updated.emit(
-            item['mark'], item['count'], item['title'], item['dirpath']
-        )
+    # def add_file(self, path: str, mark='0'):
+    #     path_2_mark[path] = mark
+    #     self.mark_2_paths[mark].add(path)
+    #     self._update_count(mark, len(self.mark_2_paths[mark]))
+    #
+    # def remove_file(self, path: str):
+    #     mark = path_2_mark.pop(path)
+    #     self.mark_2_paths[mark].remove(path)
+    #     self._update_count(mark, len(self.mark_2_paths[mark]))
+    #
+    # # noinspection PyMethodOverriding
+    # def clear(self, mark: str) -> tuple[str, ...]:
+    #     out = tuple(self.mark_2_paths[mark])
+    #     for path in self.mark_2_paths[mark]:
+    #         path_2_mark.pop(path)
+    #     self.mark_2_paths[mark].clear()
+    #     self._update_count(mark, 0)
+    #     return out
+    #
+    # def _update_count(self, mark: str, count: int):
+    #     index = self.mark_2_index[mark]
+    #     item = self.update(index=index, item={'count': count})
+    #     self.mark_updated.emit(
+    #         item['mark'], item['count'], item['title'], item['dirpath']
+    #     )
 
 
 class Model4(BaseModel):
