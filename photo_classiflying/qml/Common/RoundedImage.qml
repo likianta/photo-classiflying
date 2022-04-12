@@ -14,4 +14,10 @@ Image {
             radius: root.radius
         }
     }
+
+    onStatusChanged: {
+        if (status == Image.Error) {
+            this.source = './Common/BrokenImage.jpg'
+        }
+    }
 }
