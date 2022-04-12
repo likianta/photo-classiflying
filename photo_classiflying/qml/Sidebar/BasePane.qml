@@ -2,9 +2,9 @@ import QtQuick
 
 Rectangle {
     width: expanded ? expandedWidth : defaultWidth
-    radius: 4
+    radius: 8
     clip: true
-    color: '#1A2135'  // dark gray
+    color: '#041533'  // dark blue
     z: 1
 
     property int  defaultWidth: 200

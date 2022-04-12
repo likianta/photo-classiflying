@@ -5,8 +5,10 @@ Rectangle {
     width: 0
     height: 24
     border.width: 1
-    border.color: _area.containsMouse ? '#ffffff' : '#dddddd'
-    color: _area.pressed ? '#bbbbbb' : '#1A2135'  // deep gray : gray
+    border.color: _area.pressed ? '#344068' : (
+        _area.containsMouse ? '#40407A' : '#1E2B58'
+    )
+    color: _area.pressed ? '#344068' : '#1E2B58'
     radius: 8
 
     property alias font: _txt.font
@@ -19,7 +21,8 @@ Rectangle {
     Text {
         id: _txt
         anchors.centerIn: parent
-        color: 'white'
+        color: '#C4C0C0'
+        font.pixelSize: 12
     }
 
     MouseArea {
