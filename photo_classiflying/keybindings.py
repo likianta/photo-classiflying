@@ -6,7 +6,7 @@ from lk_qtquick_scaffold import slot
 
 
 class PyKeyBindings(QObject):
-    mark_updated = signal(str)  # signal[str mark]
+    mark_updated = signal(str, int)  # signal[str mark, int group_index]
     last_mark: str = '0'
     
     _preview_item: QObject
@@ -17,7 +17,7 @@ class PyKeyBindings(QObject):
         self._preview_item = preview_item
         self._thumbnails_item = thumbnails_item
         print(':v', 'bound with preview and thumbnails items')
-
+    
     # noinspection PyUnusedLocal
     @slot(int, str, bool)
     def handle_key(self, code: int, key: str, shift: bool):
@@ -39,48 +39,60 @@ class PyKeyBindings(QObject):
         # ---------------------------------------------------------------------
         # mark keys
         mark_keys = {
-            Qt.Key_0: '0',
-            Qt.Key_1: '1',
-            Qt.Key_2: '2',
-            Qt.Key_3: '3',
-            Qt.Key_4: '4',
-            Qt.Key_5: '5',
-            Qt.Key_6: '6',
-            Qt.Key_7: '7',
-            Qt.Key_8: '8',
-            Qt.Key_9: '9',
-            Qt.Key_A: 'a',
-            Qt.Key_B: 'b',
-            Qt.Key_C: 'c',
-            Qt.Key_D: 'd',
-            Qt.Key_E: 'e',
-            Qt.Key_F: 'f',
-            Qt.Key_G: 'g',
-            Qt.Key_H: 'h',
-            Qt.Key_I: 'i',
-            Qt.Key_J: 'j',
-            Qt.Key_K: 'k',
-            Qt.Key_L: 'l',
-            Qt.Key_M: 'm',
-            Qt.Key_N: 'n',
-            Qt.Key_O: 'o',
-            Qt.Key_P: 'p',
-            Qt.Key_Q: 'q',
-            Qt.Key_R: 'r',
-            Qt.Key_S: 's',
-            Qt.Key_T: 't',
-            Qt.Key_U: 'u',
-            Qt.Key_V: 'v',
-            Qt.Key_W: 'w',
-            Qt.Key_X: 'x',
-            Qt.Key_Y: 'y',
-            Qt.Key_Z: 'z',
+            Qt.Key_0     : '0',
+            Qt.Key_1     : '1',
+            Qt.Key_2     : '2',
+            Qt.Key_3     : '3',
+            Qt.Key_4     : '4',
+            Qt.Key_5     : '5',
+            Qt.Key_6     : '6',
+            Qt.Key_7     : '7',
+            Qt.Key_8     : '8',
+            Qt.Key_9     : '9',
+            Qt.Key_A     : 'a',
+            Qt.Key_B     : 'b',
+            Qt.Key_C     : 'c',
+            Qt.Key_D     : 'd',
+            Qt.Key_E     : 'e',
+            Qt.Key_F     : 'f',
+            Qt.Key_G     : 'g',
+            Qt.Key_H     : 'h',
+            Qt.Key_I     : 'i',
+            Qt.Key_J     : 'j',
+            Qt.Key_K     : 'k',
+            Qt.Key_L     : 'l',
+            Qt.Key_M     : 'm',
+            Qt.Key_N     : 'n',
+            Qt.Key_O     : 'o',
+            Qt.Key_P     : 'p',
+            Qt.Key_Q     : 'q',
+            Qt.Key_R     : 'r',
+            Qt.Key_S     : 's',
+            Qt.Key_T     : 't',
+            Qt.Key_U     : 'u',
+            Qt.Key_V     : 'v',
+            Qt.Key_W     : 'w',
+            Qt.Key_X     : 'x',
+            Qt.Key_Y     : 'y',
+            Qt.Key_Z     : 'z',
+            Qt.Key_Comma : ',',
+            Qt.Key_Period: '.',
         }
         
         # mark and goto next image
         if code in mark_keys:
             mark = mark_keys[code]
-            self.mark_updated.emit(mark)
+            # noinspection PyCompatibility
+            match mark:
+                case '0':
+                    group_index = 0
+                case x if x.isdigit():
+                    group_index = 1
+                case x if x.isalpha():
+                    group_index = 2
+                case _:
+                    group_index = 3
+            self.mark_updated.emit(mark, group_index)
             self.last_mark = mark
             self._thumbnails_item.nextImage()
         
@@ -123,5 +135,5 @@ class PyKeyBindings(QObject):
         
         # reset mark but not goto next image
         elif code == Qt.Key_Escape:
-            self.mark_updated.emit('0')
+            self.mark_updated.emit('0', 0)
             self.last_mark = '0'

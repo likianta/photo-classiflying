@@ -1,6 +1,7 @@
 /.idea/
 /deleted/
 /model/*.pkl
+/model/recycle_bin/*
 /tests/
 __pycache__
 *.pyc
