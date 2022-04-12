@@ -8,8 +8,9 @@ Item {
     property int  expandedWidth
     property bool expanded
 
-    property alias     model: _listview.model
-    property var       options: null
+    property Item  listview: _listview
+    property alias model: _listview.model
+    property var   options: null
 
     ListView {
         id: _listview

@@ -10,7 +10,6 @@ Row {
     property int  defaultWidth
     property int  expandedWidth
     property bool expanded
-//     property var  model
     property var  options: {
         'group_index': -1,
         'show_index': false,
@@ -22,6 +21,11 @@ Row {
         'exec_button_name': 'move',
         'custom_exec_button_func': false,
     }
+
+    property var btn1: _clear_btn
+    property var btn2: _exec_btn
+    property var dirpathItem: _dirpath
+    property var titleItem: _title
 
     signal execClicked()
 
@@ -69,12 +73,13 @@ Row {
         }
     }
 
-    B.Text {
-        // just a spacer
-        visible: root.expanded
-        anchors.verticalCenter: parent.verticalCenter
-        text: '|'
-    }
+//     B.Text {
+//         // just a spacer
+//         visible: root.expanded
+//         anchors.verticalCenter: parent.verticalCenter
+//         color: '#888888'
+//         text: '|'
+//     }
 
     C.TextEdit {
         id: _dirpath

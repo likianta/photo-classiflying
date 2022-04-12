@@ -16,4 +16,19 @@ B.CollapsablePane {
         'exec_button_name': 'move',
         'custom_exec_button_func': false,
     }
+
+    Component.onCompleted: {
+        let item
+
+        item = root.listview.itemAtIndex(0)
+        item.titleItem.text = 'finalized'
+        item.dirpathItem.visible = false
+        item.btn1.visible = false
+        item.btn2.visible = false
+
+        item = root.listview.itemAtIndex(1)
+        item.titleItem.text = 'deleted'
+        item.dirpathItem.visible = false
+        item.btn1.visible = false
+    }
 }

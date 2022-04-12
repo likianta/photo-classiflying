@@ -93,16 +93,12 @@ class PyMainProgram(QObject):
             
             # noinspection PyCompatibility
             match group_index:
-                case 0:
-                    return method
                 case 1:
                     raise Exception(
                         'the case is not impossible. it should be triggered by '
                         '`sidebar_models[2]` internally.'
                     )
-                case 2:
-                    return partial(method, path=path)
-                case 3:
+                case _:
                     return partial(method, path=path)
         
         # ---------------------------------------------------------------------
