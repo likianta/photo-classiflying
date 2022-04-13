@@ -49,7 +49,7 @@ class BaseModel(Model):
         index = self.uid_2_index[uid]
         self.update(index, {'count': len(uid_2_paths[uid])})
     
-    def move_paths(self, mark: str) -> tuple[str]:
+    def move_paths(self, mark: str) -> tuple[str, ...]:
         from os.path import basename
         from shutil import move
         
@@ -282,6 +282,13 @@ class Model3(BaseModel):
             mark_2_uid[mark] = uid
         
         self.resorted.emit(self)
+
+    def move_paths(self, mark: str) -> tuple[str]:
+        item = self.get(index=self.mark_2_index(mark))
+        self.mark_updated.emit(
+            mark, 0, item['title'], item['dirpath']
+        )
+        return super().move_paths(mark)
 
 
 class Model4(BaseModel):

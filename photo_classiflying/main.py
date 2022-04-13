@@ -122,13 +122,19 @@ class PyMainProgram(QObject):
             old_model_index = mark_2_modelx(old_mark)
             model = self._sidebar_models[old_model_index]
             method = get_method(model, old_model_index, False)
-            method(old_mark)
+            try:
+                method(old_mark)
+            except KeyError as e:
+                print(':v4', old_model_index, old_mark, e)
         
         path_2_mark[path] = mark
         model_index = mark_2_modelx(mark)
         model = self._sidebar_models[model_index]
         method = get_method(model, model_index, True)
-        method(mark)
+        try:
+            method(mark)
+        except KeyError as e:
+            print(':v4', model_index, mark, e)
 
 
 _holder = []  # runtime holder, avoid python gc.
