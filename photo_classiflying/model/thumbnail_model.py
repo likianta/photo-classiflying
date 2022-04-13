@@ -66,6 +66,15 @@ class PyThumbnailModel(Model):
             ])
         return len(new_paths), len(old_paths)
     
+    def refresh_marks(self, current_index: int):
+        from .index import path_2_mark
+        for i in range(current_index):
+            item = self.get(i)
+            if item['mark'] and item['mark'].isalpha() and (
+                    item['mark'] != (new_mark := path_2_mark[item['filepath']])
+            ):
+                self.update(i, {'mark': new_mark})
+    
     def remove_path(self, path: str):
         index = self._paths.index(path)
         self.delete(index)

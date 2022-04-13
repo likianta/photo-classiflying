@@ -26,16 +26,27 @@ class PyMainProgram(QObject):
         self._sidebar_models = get_sidebar_models(gallery_dir)
         self._key_bindings = PyKeyBindings()
         
+        # connect signals
         self._thumbnail_model.file_added.connect(
-            self._sidebar_models[0].increase_mark_count)
+            self._sidebar_models[0].increase_mark_count
+        )
         self._thumbnail_model.file_removed.connect(
-            self._sidebar_models[0].decrease_mark_count)
+            self._sidebar_models[0].decrease_mark_count
+        )
         self._key_bindings.mark_updated.connect(
-            self._update_mark)
+            self._update_mark
+        )
         self._sidebar_models[2].mark_updated.connect(
-            self._sidebar_models[1].update_mark)
+            self._sidebar_models[1].update_mark
+        )
         self._sidebar_models[2].resorted.connect(
-            self._sidebar_models[1].resort_marks)
+            self._sidebar_models[1].resort_marks
+        )
+        self._sidebar_models[2].resorted.connect(
+            lambda *_: self._thumbnail_model.refresh_marks(
+                self._current_thumb_index
+            )
+        )
         
         app.register_pyobj(self._thumbnail_model, 'PyThumbnailModel')
         app.register_pyobj(self._sidebar_models[0], 'PySidebarModelForGroup1')
