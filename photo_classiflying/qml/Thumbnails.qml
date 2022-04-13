@@ -30,7 +30,14 @@ ListView {
             return
         }
         preview.source = this.currentItem.source
-        preview.mark = Qt.binding(() => this.currentItem.mark)
+        preview.mark = Qt.binding(() => {
+            if (this.currentItem) {
+                return this.currentItem.mark
+            } else {
+                // this may be happened when user exits the application.
+                return ''
+            }
+        })
 //        preview.mark = this.currentItem.mark
         preview.resetFillMode()
         PyMainProg.set_current_thumb_index(this.currentIndex)

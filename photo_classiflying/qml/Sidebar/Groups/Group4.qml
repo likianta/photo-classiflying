@@ -29,6 +29,7 @@ B.CollapsablePane {
         item = root.listview.itemAtIndex(1)
         item.titleItem.text = 'deleted'
         item.dirpathItem.visible = false
+        //  PERF: make dirpathItem visible but not editable.
         item.btn1.visible = false
         item.btn2.text = 'delete'
     }

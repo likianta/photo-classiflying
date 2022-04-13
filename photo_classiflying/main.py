@@ -10,7 +10,6 @@ from . import paths
 from .keybindings import PyKeyBindings
 from .model import PyThumbnailModel
 from .model import get_sidebar_models
-from .model import path_2_mark
 
 os.chdir(currdir())
 
@@ -53,8 +52,8 @@ class PyMainProgram(QObject):
         self._thumbnail_model.save()
     
     @slot(str, int)
-    def move_paths(self, mark: str, group_index: int):
-        paths = self._sidebar_models[group_index].move_paths(mark)
+    def move_paths(self, mark: str, model_index: int):
+        paths = self._sidebar_models[model_index].move_paths(mark)
         for p in paths:
             self._thumbnail_model.remove_path(p)
     
@@ -71,20 +70,27 @@ class PyMainProgram(QObject):
         self._sidebar_models[2].sort_marks()
     
     def _update_mark(self, mark: str):
-        from .model import mark_2_group_index
+        from .model.index import mark_2_modelx, path_2_mark
         
         self._thumbnail_model.update(
             index=self._current_thumb_index,
             item={'mark': mark}
         )
         
-        """
-        1. if mark in `global : path_2_mark`, call remove method.
-        2. then call add method.
-        """
+        path = self._thumbnail_model[self._current_thumb_index]['filepath']
+        if path in path_2_mark:
+            old_mark, new_mark = path_2_mark[path], mark
+            if old_mark == new_mark:
+                return
+        else:
+            old_mark, new_mark = None, mark
         
-        def get_method(model, group_index: int, inc: bool):
-            # inc: True: increase; False: decrease.
+        def get_method(model, model_index: int, inc: bool):
+            """ get method of updating mark and count.
+            
+            args:
+                inc: True: increase; False: decrease.
+            """
             from functools import partial
             nonlocal mark, path
             
@@ -92,7 +98,7 @@ class PyMainProgram(QObject):
                 else model.decrease_mark_count
             
             # noinspection PyCompatibility
-            match group_index:
+            match model_index:
                 case 1:
                     raise Exception(
                         'the case is not impossible. it should be triggered by '
@@ -102,20 +108,19 @@ class PyMainProgram(QObject):
                     return partial(method, path=path)
         
         # ---------------------------------------------------------------------
+        # 1. if mark in `path_2_uid`, call remove method.
+        # 2. then call add method.
         
-        path = self._thumbnail_model[self._current_thumb_index]['filepath']
-        
-        if path in path_2_mark:
-            old_mark = path_2_mark[path]
-            old_group_index = mark_2_group_index(old_mark)
-            model = self._sidebar_models[old_group_index]
-            method = get_method(model, old_group_index, False)
+        if old_mark is not None:
+            old_model_index = mark_2_modelx(old_mark)
+            model = self._sidebar_models[old_model_index]
+            method = get_method(model, old_model_index, False)
             method(old_mark)
         
         path_2_mark[path] = mark
-        group_index = mark_2_group_index(mark)
-        model = self._sidebar_models[group_index]
-        method = get_method(model, group_index, True)
+        model_index = mark_2_modelx(mark)
+        model = self._sidebar_models[model_index]
+        method = get_method(model, model_index, True)
         method(mark)
 
 

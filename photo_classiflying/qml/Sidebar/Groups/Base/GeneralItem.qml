@@ -110,13 +110,6 @@ Row {
         text: 'clear'
         onClicked: {
             _dirpath.submitted('')
-//             // FIXME: `_dirpath.text = ...` will break the binding mechanism
-//             //  between text and model. we have to make a workaround to
-//             //  reconnect them.
-//             _dirpath.text = ''
-//             _dirpath.submitted('')
-//             // this is the workaround.
-//             _dirpath.text = Qt.binding(() => model.dirpath)
         }
     }
     
@@ -131,17 +124,5 @@ Row {
                 root.options['group_index'],
             )
         }
-//         Component.onCompleted: {
-//             if (root.options['custom_exec_button_func']) {
-//                 this.clicked.connect(root.execClicked)
-//             } else {
-//                 this.clicked.connect(() => {
-//                     PyMainProg.move_paths(
-//                         model.mark,
-//                         root.options['group_index'],
-//                     )
-//                 })
-//             }
-//         }
     }
 }
