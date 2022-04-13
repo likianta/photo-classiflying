@@ -32,6 +32,7 @@ class PyThumbnailModel(Model):
             self.refresh_gallery()
             return len(self._items)
         
+        print('loading gallery...')
         # self.clear()
         for fp, fn in fs.find_files(self._gallery_root):
             self.append({
