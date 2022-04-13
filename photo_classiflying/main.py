@@ -34,6 +34,8 @@ class PyMainProgram(QObject):
             self._update_mark)
         self._sidebar_models[2].mark_updated.connect(
             self._sidebar_models[1].update_mark)
+        self._sidebar_models[2].resorted.connect(
+            self._sidebar_models[1].resort_marks)
         
         app.register_pyobj(self._thumbnail_model, 'PyThumbnailModel')
         app.register_pyobj(self._sidebar_models[0], 'PySidebarModelForGroup1')

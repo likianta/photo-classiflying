@@ -119,7 +119,7 @@ class Model1(BaseModel):
         uid_2_paths[self.uid].add(path)
         path_2_mark[path] = self.mark
         self.update(0, {'count': len(uid_2_paths[self.uid])})
-
+    
     # noinspection PyUnusedLocal
     def remove_file(self, path: str):
         # note: `remove_file` is triggered when `Model4.move_paths` processed.
@@ -145,10 +145,13 @@ class Model2(Model):
     model_index = 1
     
     def __init__(self):
-        super().__init__(role_names=('mark', 'count', 'title', 'dirpath'))
+        super().__init__(role_names=(
+            'uid', 'mark', 'count', 'title', 'dirpath'
+        ))
         self.recent_marks = []
         self.append_many(
-            [{'mark': '', 'count': 0, 'title': '', 'dirpath': ''}] * 9
+            [{'uid': '', 'mark': '', 'count': 0, 'title': '', 'dirpath': ''}]
+            for _ in range(9)
         )
     
     def restore_from_local(self, items: list):
@@ -177,13 +180,26 @@ class Model2(Model):
             'title'  : title,
             'dirpath': dirpath
         })
+    
+    def resort_marks(self, model3: 'Model3'):
+        """
+        this method is connected with `Model3.resorted` signal.
+        """
+        for i, item in enumerate(self.items):
+            uid = item['uid']
+            if not uid: continue
+            model3_index = model3.uid_2_index[uid]
+            model3_item = model3.get(model3_index)
+            self.update(i, model3_item)
 
 
 class Model3(BaseModel):
     """ all items. """
     model_index = 2
-    mark_updated = signal(str, int, str, str)  # mark, count, title, dirpath
     is_dirty_sort: bool = False  # sort flag. see also `self.sort_marks`.
+    
+    mark_updated = signal(str, int, str, str)  # mark, count, title, dirpath
+    resorted = signal(object)
     
     def __init__(self):
         super().__init__(
@@ -268,6 +284,7 @@ class Model3(BaseModel):
             for i, x in enumerate(items):
                 self.uid_2_index[x['uid']] = i
             self.update_many(0, changed_length, items)
+        self.resorted.emit(self)
 
 
 class Model4(BaseModel):
