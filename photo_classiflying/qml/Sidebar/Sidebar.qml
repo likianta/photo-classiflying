@@ -15,7 +15,7 @@ BasePane {
             left: parent.left
             right: parent.right
             top: parent.top
-            bottom: _expand_btn.top
+            bottom: _base_toolbar.top
             margins: 8
 //             bottomMargin: 8
         }
@@ -24,28 +24,35 @@ BasePane {
         expanded: root.expanded
     }
 
-    C.Button {
-        id: _expand_btn
+    BaseToolbar {
+        id: _base_toolbar
         anchors {
-//            horizontalCenter: parent.horizontalCenter
+            left: parent.left
             bottom: parent.bottom
             margins: 8
         }
-        x: (root.defaultWidth - width) / 2
-        text: 'expand'
-        onClicked: {
+        width: root.defaultWidth - 8
+        onExpandClicked: {
             root.expanded = !root.expanded
+        }
+        onNewItemClicked: {
+            PySidebarModelForGroup3.qappend({
+                'mark': '_',
+                'count': 0,
+                'title': '',
+                'dirpath': '',
+            })
         }
     }
 
-    ExtendBar {
+    ExtendToolbar {
+        id: _extend_toolbar
         visible: root.expanded
         anchors {
+            left: _base_toolbar.right
             bottom: parent.bottom
             margins: 8
-            leftMargin: 0
         }
-        x: root.defaultWidth
-        width: root.expandedWidth - x
+        width: root.expandedWidth - root.defaultWidth
     }
 }

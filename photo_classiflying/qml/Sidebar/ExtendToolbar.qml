@@ -6,7 +6,7 @@ Row {
     spacing: 4
 
     C.Button {
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.bottom: parent.bottom
         text: 'sort'
         onClicked: {
             PyMainProg.sort_marks()
@@ -14,7 +14,7 @@ Row {
     }
 
     C.Button {
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.bottom: parent.bottom
         text: 'refresh'
         onClicked: {
             PyMainProg.refresh_gallery()
