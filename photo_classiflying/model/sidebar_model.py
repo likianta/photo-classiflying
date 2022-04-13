@@ -231,8 +231,9 @@ class Model3(BaseModel):
                     (bool title_not_empty, int path_depth_is_low,
                      str title_lowercase_in_alphabet)
         """
+        from copy import deepcopy
         if self.is_dirty_sort:
-            items = self._items[:]  # type: list[dict]
+            items = deepcopy(self._items)  # type: list[dict]
             # 1. sort all marks (no matter valid or invalid) in alphabet order.
             # 2. put valid marks first and sort them by self.MARK_2_INDEX.
             items.sort(key=lambda x: x['mark'])
@@ -252,17 +253,18 @@ class Model3(BaseModel):
             #   - the first 26 items have convered all valid marks.
             #   - we can just rebuild and refresh the first 26 items.
             changed_length = len(self.MARK_2_INDEX)  # -> 26
-            items = self._items[:changed_length]  # type: list[dict]
+            items = deepcopy(self._items[:changed_length])  # type: list[dict]
+            # print(':vl', 'before', items)
             # inspired by: https://cloud.tencent.com/developer/ask/219983
             items.sort(key=lambda x: (
                 0 if x['mark'] in self.MARK_2_INDEX else 1,
                 0 if x['title'] else 1,
-                x['dirpath'].count('/'),
-                x['title'].lower()
+                x['dirpath'].lower(),
             ))
             # the sort has affected mark_2_uid, uid_2_index.
             for x, mark in zip(items, self.MARK_2_INDEX.keys()):
                 x['mark'] = mark
+            # print(':vl', 'after', items)
             for i, x in enumerate(items):
                 self.uid_2_index[x['uid']] = i
             self.update_many(0, changed_length, items)
