@@ -27,9 +27,9 @@ class PyMainProgram(QObject):
         self._key_bindings = PyKeyBindings()
         
         self._thumbnail_model.file_added.connect(
-            self._sidebar_models[0].add_file)
+            self._sidebar_models[0].increase_mark_count)
         self._thumbnail_model.file_removed.connect(
-            self._sidebar_models[0].remove_file)
+            self._sidebar_models[0].decrease_mark_count)
         self._key_bindings.mark_updated.connect(
             self._update_mark)
         self._sidebar_models[2].mark_updated.connect(
@@ -53,6 +53,11 @@ class PyMainProgram(QObject):
         save_sidebar_models(self._sidebar_models)
         self._thumbnail_model.save()
     
+    @slot()
+    def load_gallery(self):
+        count = self._thumbnail_model.load_gallery()
+        self._sidebar_models[0].reset_mark_count(count)
+    
     @slot(str, int)
     def move_paths(self, mark: str, model_index: int):
         paths = self._sidebar_models[model_index].move_paths(mark)
@@ -61,7 +66,9 @@ class PyMainProgram(QObject):
     
     @slot()
     def refresh_gallery(self):
-        self._thumbnail_model.refresh_gallery()
+        added, removed = self._thumbnail_model.refresh_gallery()
+        print(added, removed, ':v2')
+        self._sidebar_models[0].reset_mark_count(len(self._thumbnail_model))
     
     @slot(int)
     def set_current_thumb_index(self, index: int):
@@ -82,8 +89,6 @@ class PyMainProgram(QObject):
         path = self._thumbnail_model[self._current_thumb_index]['filepath']
         if path in path_2_mark:
             old_mark, new_mark = path_2_mark[path], mark
-            if old_mark == new_mark:
-                return
         else:
             old_mark, new_mark = None, mark
         

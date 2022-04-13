@@ -92,7 +92,7 @@ ListView {
     }
 
     Component.onCompleted: {
-        this.model.load_gallery()
+        PyMainProg.load_gallery()
         this.currentIndex = 0
     }
 }

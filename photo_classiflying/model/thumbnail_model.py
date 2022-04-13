@@ -7,7 +7,6 @@ from lk_utils import loads
 
 from lk_qtquick_scaffold import Model
 from lk_qtquick_scaffold import signal
-from lk_qtquick_scaffold import slot
 from ..paths import thumbnail_model as model_path
 
 
@@ -26,14 +25,14 @@ class PyThumbnailModel(Model):
             self.append_many(db['items'])
             self._paths.extend(db['paths'])
     
-    @slot(result=int)
     def load_gallery(self) -> int:
-        if self._items:
-            self.refresh_gallery()
-            return len(self._items)
+        if self.items:
+            # self.refresh_gallery()
+            # return len(self.items)
+            self.clear()
+            self._paths.clear()
         
         print('loading gallery...')
-        # self.clear()
         for fp, fn in fs.find_files(self._gallery_root):
             self.append({
                 'filepath': fp,
@@ -41,24 +40,21 @@ class PyThumbnailModel(Model):
                 'created' : _get_file_created_time(fp),
                 'mark'    : '0',
             })
-        print(self._gallery_root, len(self._items))
-        return len(self._items)
+        print(self._gallery_root, len(self.items))
+        return len(self.items)
     
-    def refresh_gallery(self):
-        paths = {
-            x['filepath']: i for i, x in enumerate(self.items)
-        }
+    def refresh_gallery(self) -> tuple[int, int]:
+        # return: tuple[int added, int removed]
+        old_paths = set(self._paths.copy())
         new_paths = []
-        for p in fs.findall_file_paths(self._gallery_root):
-            if p in paths:
-                paths.pop(p)
+        for p in fs.find_file_paths(self._gallery_root):
+            if p in old_paths:
+                old_paths.remove(p)
             else:
                 new_paths.append(p)
-        # print(':l', paths, len(paths))
-        # print(':l', new_paths, len(new_paths))
-        if paths:  # there are some files deleted
-            for p, i in paths.items():
-                self.delete(i)
+        if old_paths:  # there are some files not exists anymore.
+            for p in old_paths:
+                self.remove_path(p)
         if new_paths:
             self.append_many([
                 {
@@ -68,6 +64,7 @@ class PyThumbnailModel(Model):
                     'mark'    : '0',
                 } for p in new_paths
             ])
+        return len(new_paths), len(old_paths)
     
     def remove_path(self, path: str):
         index = self._paths.index(path)

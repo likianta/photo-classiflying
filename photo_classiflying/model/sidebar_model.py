@@ -100,7 +100,7 @@ class Model1(BaseModel):
     
     def __init__(self, gallery_dir: str):
         super().__init__(mark_2_index={'0': 0})
-        # self._gallery_dir = gallery_dir
+        self._count = 0
         self.update(0, {'title': 'default', 'dirpath': gallery_dir})
     
     @property
@@ -111,25 +111,17 @@ class Model1(BaseModel):
     def uid(self):
         return mark_2_uid['0']
     
-    def init_paths(self, paths):
-        uid_2_paths[self.uid] = set(paths)
-        self.update(0, {'count': len(paths)})
+    def increase_mark_count(self, *_, **__):
+        self._count += 1
+        self.update(0, {'count': self._count})
     
-    def add_file(self, path: str):
-        uid_2_paths[self.uid].add(path)
-        path_2_mark[path] = self.mark
-        self.update(0, {'count': len(uid_2_paths[self.uid])})
+    def decrease_mark_count(self, *_, **__):
+        self._count -= 1
+        self.update(0, {'count': self._count})
     
-    # noinspection PyUnusedLocal
-    def remove_file(self, path: str):
-        # note: `remove_file` is triggered when `Model4.move_paths` processed.
-        # be noticed that `Model4.move_paths` has popped path from
-        # `path_2_mark`. so we don't need to pop it here again.
-        # # uid_2_paths[self.uid].remove(path)
-        # # path_2_mark.pop(path)
-        # assert len(uid_2_paths[self.uid]) >= 0
-        #   actually, this assertion should be equal to ZERO.
-        self.update(0, {'count': len(uid_2_paths[self.uid])})
+    def reset_mark_count(self, count=0):
+        self._count = count
+        self.update(0, {'count': count})
 
 
 class Model2(Model):
@@ -149,10 +141,10 @@ class Model2(Model):
             'uid', 'mark', 'count', 'title', 'dirpath'
         ))
         self.recent_marks = []
-        self.append_many(
-            [{'uid': '', 'mark': '', 'count': 0, 'title': '', 'dirpath': ''}]
+        self.append_many(list(
+            {'uid': '', 'mark': '', 'count': 0, 'title': '', 'dirpath': ''}
             for _ in range(9)
-        )
+        ))
     
     def restore_from_local(self, items: list):
         assert len(items) == 9  # 1-9
@@ -284,6 +276,11 @@ class Model3(BaseModel):
             for i, x in enumerate(items):
                 self.uid_2_index[x['uid']] = i
             self.update_many(0, changed_length, items)
+        
+        for mark, index in self.MARK_2_INDEX.items():
+            uid = self.get(index)['uid']
+            mark_2_uid[mark] = uid
+        
         self.resorted.emit(self)
 
 
